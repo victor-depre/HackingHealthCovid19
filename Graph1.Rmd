@@ -1,0 +1,120 @@
+---
+title: "Graph 1 : Cumulative number of cases"
+author: "Victor Dépré"
+date: "10/04/2020"
+output: html_document
+---
+
+<style>
+.html-widget {margin: auto;}
+</style>
+<style>
+body {text-align: justify}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+library(dplyr) 
+library(tidyr)
+library(leaflet)
+library(leaflet.extras)
+library(leaftime)
+```
+
+```{r include=FALSE}
+CoronavirusWorld <- utils::read.csv("https://raw.githubusercontent.com/RamiKrispin/coronavirus-csv/master/coronavirus_dataset.csv")
+CoronavirusWorld[CoronavirusWorld == "" ] <- NA
+```
+
+
+
+
+```{r, include = FALSE}
+#df <- coronavirus%>% 
+#  dplyr::filter(date == max(date)) %>%
+#  dplyr::summarise(total = sum(cases)) %>%
+#  tidyr::pivot_wider(names_from =  type, 
+#                     values_from = total) %>%
+#  dplyr::mutate(unrecovered = confirmed - ifelse(is.na(recovered), 0, recovered) - #ifelse(is.na(death), 0, death)) %>%
+#  dplyr::arrange(-confirmed) %>%
+#  dplyr::ungroup() %>%
+#  dplyr::mutate(country = dplyr::if_else(Country.Region == "United Arab Emirates", "UAE", Country.Region)) %>%
+#  dplyr::mutate(country = dplyr::if_else(country == "Mainland China", "China", country)) %>%
+#  dplyr::mutate(country = dplyr::if_else(country == "North Macedonia", "N.Macedonia", country)) %>%
+#  dplyr::mutate(country = trimws(country)) %>%
+#  dplyr::mutate(country = factor(country, levels = country))
+
+#df
+
+```
+
+```{r include = FALSE}
+library(coronavirus)
+df_daily <- coronavirus %>% 
+  dplyr::group_by(date, type) %>%
+  dplyr::summarise(total = sum(cases, na.rm = TRUE)) %>%
+  tidyr::pivot_wider(names_from = type,
+                     values_from = total) %>%
+  dplyr::arrange(date) %>%
+  dplyr::ungroup() %>%
+  dplyr::mutate(active =  confirmed - death - recovered) %>%
+  dplyr::mutate(confirmed_cum = cumsum(confirmed),
+                death_cum = cumsum(death),
+                recovered_cum = cumsum(recovered),
+                active_cum = cumsum(active))
+  
+
+df1 <- coronavirus %>% dplyr::filter(date == max(date))
+
+
+```
+
+
+
+Cumulative number of cases graph
+
+-------------
+
+```{r echo=FALSE}
+
+Graph1.1 <- plotly::plot_ly(df_daily, x = ~date, y = ~active_cum, name = 'Active', type = 'scatter', mode = 'none', stackgroup = 'one', fillcolor = "#1f77b4") %>%
+plotly::add_trace(y = ~recovered_cum, name = 'Recovered', fillcolor = "green") %>%
+plotly::add_trace(y = ~death_cum, name = "Death", fillcolor = "red") %>%
+plotly::layout(title = "",
+          xaxis = list(title = "",
+                       showgrid = FALSE),
+          yaxis = list(title = "Cumulative Number of Cases",
+                       showgrid = FALSE),
+          legend = list(x = 0.1, y = 0.9),
+                  hovermode = "compare")
+
+
+Graph1 <- plotly::plot_ly(data = df_daily,
+                x = ~ date,
+                y = ~ active_cum, 
+                name = 'Active', 
+                fillcolor = 'paleturquoise2',
+                type = 'scatter',
+                mode = 'none', 
+                stackgroup = 'one') %>%
+  plotly::add_trace(y = ~ recovered_cum,
+                    name = "Recovered",
+                    fillcolor = 'lightgreen') %>%
+  plotly::add_trace(y = ~ death_cum,
+                    name = "Death",
+                    fillcolor = 'lightcoral') %>%
+  plotly::layout(title = "",
+                 yaxis = list(title = "Cumulative Number of Cases"),
+                 xaxis = list(title = "Date"),
+                 legend = list(x = 0.1, y = 0.9),
+                 hovermode = "compare")
+
+Graph1
+
+```
+
