@@ -1,5 +1,5 @@
 ---
-title: "Graph 1 : Cumulative number of cases - UK"
+title: "Graph 1 : Cumulative number of cases - France"
 author: "Victor Dépré"
 date: "10/04/2020"
 output: html_document
@@ -28,9 +28,9 @@ library(tidyr)
 
 library(coronavirus)
 
-CoronavirusUK <- filter(coronavirus, Country.Region == "United Kingdom")
+CoronavirusFR <- filter(coronavirus, Country.Region == "France")
 
-CoronavirusUK_daily <- CoronavirusUK %>% 
+CoronavirusFR_daily <- CoronavirusFR %>% 
   dplyr::group_by(date, type) %>%
   dplyr::summarise(total = sum(cases, na.rm = TRUE)) %>%
   tidyr::pivot_wider(names_from = type,
@@ -47,13 +47,13 @@ CoronavirusUK_daily <- CoronavirusUK %>%
 
 
 
-Cumulative number of cases in the UK graph
+Cumulative number of cases in France graph
 
 -------------
 
 ```{r echo=FALSE}
 
-Graph1UK.1 <- plotly::plot_ly(CoronavirusUK_daily, x = ~date, y = ~active_cum, name = 'Active', type = 'scatter', mode = 'none', stackgroup = 'one', fillcolor = "#1f77b4") %>%
+Graph1FR.1 <- plotly::plot_ly(CoronavirusFR_daily, x = ~date, y = ~active_cum, name = 'Active', type = 'scatter', mode = 'none', stackgroup = 'one', fillcolor = "#1f77b4") %>%
 plotly::add_trace(y = ~recovered_cum, name = 'Recovered', fillcolor = "green") %>%
 plotly::add_trace(y = ~death_cum, name = "Death", fillcolor = "red") %>%
 plotly::layout(title = "",
@@ -65,7 +65,7 @@ plotly::layout(title = "",
                   hovermode = "compare")
 
 
-Graph1UK <- plotly::plot_ly(data = CoronavirusUK_daily,
+Graph1FR <- plotly::plot_ly(data = CoronavirusFR_daily,
                 x = ~ date,
                 y = ~ active_cum, 
                 name = 'Active', 
@@ -85,6 +85,6 @@ Graph1UK <- plotly::plot_ly(data = CoronavirusUK_daily,
                  legend = list(x = 0.1, y = 0.9),
                  hovermode = "compare")
 
-Graph1UK
+Graph1FR
 
 ```
