@@ -1,0 +1,52 @@
+---
+title: "Graph2 : New cases"
+author: "Victor"
+date: "11/04/2020"
+output: html_document
+---
+
+<style>
+.html-widget {margin: auto;}
+</style>
+<style>
+body {text-align: justify}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+---------
+    
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(dplyr)
+library(tidyr)
+library(coronavirus)
+max_date <- max(coronavirus$date)
+Graph2 <- coronavirus %>%
+  dplyr::filter(type == "confirmed", date == max_date) %>%
+  dplyr::group_by(Country.Region) %>%
+  dplyr::summarise(total_cases = sum(cases)) %>%
+  dplyr::arrange(-total_cases) %>%
+  dplyr::mutate(country = factor(Country.Region, levels = Country.Region)) %>%
+  dplyr::ungroup() %>%
+  dplyr::top_n(n = 15, wt = total_cases) %>%
+  plotly::plot_ly(x = ~ country,
+                  y = ~ total_cases,
+                  text = ~ total_cases,
+                  textposition = 'auto',
+                  type = "bar") %>%
+  plotly::layout(yaxis = list(title = "Number of Cases"),
+                 xaxis = list(title = ""),
+                 margin =  list(
+                   l = 10,
+                   r = 10,
+                   b = 10,
+                   t = 10,
+                   pad = 2
+                 ))
+Graph2
+
+```
+
+
