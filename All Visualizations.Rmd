@@ -1,6 +1,6 @@
 ---
 title: "All Visualizations"
-author: "Victor"
+author: "Victor Dépré, Maxime Jacques, Alexis Chabert"
 date: "11/04/2020"
 output: html_document
 ---
