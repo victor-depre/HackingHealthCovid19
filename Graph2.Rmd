@@ -17,11 +17,14 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ---------
+
+
     
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 library(dplyr)
 library(tidyr)
 library(coronavirus)
+        
 max_date <- max(coronavirus$date)
 Graph2 <- coronavirus %>%
   dplyr::filter(type == "confirmed", date == max_date) %>%
