@@ -1,0 +1,50 @@
+---
+title: "FranceMap"
+author: "Victor"
+date: "23/04/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+
+
+```{r warning=TRUE, include=FALSE}
+
+library(sf)
+library(ggplot2)
+library(tmap)
+library(tmaptools)
+library(leaflet)
+library(dplyr)
+
+mydata <- readr::read_csv("FRA.csv")
+
+mymap <- st_read("FranceMap/FRA_adm2.shp", stringsAsFactors = FALSE)
+
+datamap <- inner_join(mymap, mydata, by = NAME_2)
+
+```
+
+```{r warning=FALSE, include=FALSE}
+
+tm_shape(datamap1bis) +
+  tm_polygons("GDP, millions of euro", id = "NAME_1", palette = "Greens")+ "GDP"
+  theme_minimal()
+  
+tmap_mode("view")
+GdpMap <- tmap_last()
+
+```
+
+```{r echo=FALSE, warning=FALSE}
+
+GdpMap
+
+#tmap_save(GdpMap, "GdpMap.html")
+
+```
