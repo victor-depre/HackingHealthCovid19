@@ -22,18 +22,20 @@ library(tmaptools)
 library(leaflet)
 library(dplyr)
 
-mydata <- readr::read_csv("FRA.csv")
+mydata <- read.csv(file = "FRA.csv", header = TRUE, stringsAsFactors=TRUE, fileEncoding="latin1")
+
+#mydata <- readr::read_csv("FRA.csv")
 
 mymap <- st_read("FranceMap/FRA_adm2.shp", stringsAsFactors = FALSE)
 
-datamap <- inner_join(mymap, mydata, by = NAME_2)
+datamap <- inner_join(mymap, mydata)
 
 ```
 
 ```{r warning=FALSE, include=FALSE}
 
-tm_shape(datamap1bis) +
-  tm_polygons("GDP, millions of euro", id = "NAME_1", palette = "Greens")+ "GDP"
+tm_shape(datamap) +
+  tm_polygons("Décès...22.04", id = "NAME_2", palette = "Greens")+ "Décés"
   theme_minimal()
   
 tmap_mode("view")
