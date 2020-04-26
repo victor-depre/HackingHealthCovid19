@@ -22,19 +22,35 @@ library(tmaptools)
 library(leaflet)
 library(dplyr)
 
-mydata <- read.csv(file = "FRA.csv", header = TRUE, stringsAsFactors=TRUE, fileEncoding="latin1")
-
-#mydata <- readr::read_csv("FRA.csv")
+mydata <- read.csv(file = "FRA.csv", header = TRUE, stringsAsFactors=TRUE, fileEncoding="latin1")n
 
 mymap <- st_read("FranceMap/FRA_adm2.shp", stringsAsFactors = FALSE)
 
-datamap <- inner_join(mymap, mydata)
+datamap1 <- inner_join(mymap, mydata)
+
+```
+
+```{r warning=FALSE}
+
+datamap2 <- ifelse(datamap$Décès...22.04 >= 0 & datamap1$Décès...22.04 <= 5, "0 to 5", ifelse(datamap1$Décès...22.04 >= 6 & datamap1$Décès...22.04 <= 10, "6 to 10", ifelse(datamap1$Décès...22.04 >= 11 & datamap1$Décès...22.04 <= 20, "11 to 20", ifelse(datamap1$Décès...22.04 >= 21 & datamap1$Décès...22.04 <= 50, "21 to 50", ifelse(datamap1$Décès...22.04 >= 51 & datamap1$Décès...22.04 <= 100, "51 to 100", ifelse(datamap1$Décès...22.04 >= 101 & datamap1$Décès...22.04 <= 200, "101 to 200", ifelse(datamap1$Décès...22.04 >= 201 & datamap1$Décès...22.04 <= 500, "201 to 500", ifelse(datamap1$Décès...22.04 >= 501, "501 or more", NA))))))))
+
+cut(datamap1$Décès...22.04, breaks=c(0, 5, 10, 20, 50, 100, 200, 500, Inf), labels=c("0 to 5", "6 to 10", "11 to 20", "21 to 50", "51 to 100", "101 to 200","201 to 500", "500 or more"))
+
+mylabels <- c("0 to 5", "6 to 10", "11 to 20", "21 to 50", "51 to 100", "101 to 200", "201 to 500", "500 or more")  
 
 ```
 
 ```{r warning=FALSE, include=FALSE}
 
-tm_shape(datamap) +
+datamap1$Décès...22.04 <- base::cut(datamap1$Décès...22.04,
+                        breaks = c(0, 5, 10, 20, 50, 100, 200, 500, 2000), 
+                        labels = mylabels, right = F, ordered_result = T)
+
+```
+
+```{r warning=FALSE, include=FALSE}
+
+tm_shape(datamap1) +
   tm_polygons("Décès...22.04", id = "NAME_2", palette = "Greens")+ "Décés"
   theme_minimal()
   
@@ -50,3 +66,4 @@ GdpMap
 #tmap_save(GdpMap, "GdpMap.html")
 
 ```
+
